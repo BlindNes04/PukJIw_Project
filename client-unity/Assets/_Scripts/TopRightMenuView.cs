@@ -17,23 +17,23 @@ public class TopRightMenuView : MonoBehaviour
 
     public void OnEventClicked()
     {
-
+        Debug.Log("Event Button Clicked");
     }
 
     public void OnSettingClicked()
     {
-
+        Debug.Log("Setting Button Clicked");
     }
 
     public void onBiomeClicked()
     {
-
+        Debug.Log("Biome Button Clicked");
     }
 
     private void OnDestroy()
     {
-        if (eventButton != null) eventButton.onClick.RemoveListenr(OnEventClicked);
-        if (settingButton != null) settingButton.onClick.RemoveListenr(OnSettingClicked);
-        if (biomeButton != null) biomeButton.onClick.RemoveListenr(onBiomeClicked);
+        if (eventButton != null) eventButton.onClick.RemoveListener(OnEventClicked);
+        if (settingButton != null) settingButton.onClick.RemoveListener(OnSettingClicked);
+        if (biomeButton != null) biomeButton.onClick.RemoveListener(onBiomeClicked);
     }
 }
