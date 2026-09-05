@@ -348,7 +348,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 1024
+  m_VerticalAlignment: 8192
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -1146,19 +1146,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 433621646}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 989382711}
-        m_TargetAssemblyTypeName: QuizManager, Assembly-CSharp
-        m_MethodName: NextQuestion
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &433621646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2272,19 +2260,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 981278863}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 989382711}
-        m_TargetAssemblyTypeName: QuizManager, Assembly-CSharp
-        m_MethodName: PreviousQuestion
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &981278863
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2352,7 +2328,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eff5f974f1a6dd849836e63ce2a946c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuizManager
-  csvFile: {fileID: 4900000, guid: 509af382e2325fd43ac11df41992f082, type: 3}
+  csvFile: {fileID: 4900000, guid: 75f34ec0cc01b904395ae4e017a2b176, type: 3}
   sectionText: {fileID: 1985337670}
   questionNumberText: {fileID: 520335592}
   questionText: {fileID: 89512152}
@@ -2361,6 +2337,7 @@ MonoBehaviour:
   textA: {fileID: 1424610496}
   textB: {fileID: 1576780950}
   nextButton: {fileID: 433621645}
+  prevButton: {fileID: 981278862}
   answeredChoice: {fileID: 2795530511749069062, guid: 89ff627753f1dd344a9cfbee6a6fd2d7, type: 3}
   progressImages:
   - {fileID: 1150352283}
@@ -2993,7 +2970,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 8192
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -3616,7 +3593,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 8192
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1

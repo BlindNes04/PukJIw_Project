@@ -38,6 +38,7 @@ public class QuizManager : MonoBehaviour
 
     [Header("Navigation UI")]
     [SerializeField] private Button nextButton;
+    [SerializeField] private Button prevButton;
 
     [Header("Answered Sprite")]
     [SerializeField] private Sprite answeredChoice;
@@ -67,6 +68,7 @@ public class QuizManager : MonoBehaviour
     private Sprite originalSpriteA;
     private Sprite originalSpriteB;
     private CanvasGroup nextButtonCanvasGroup;
+    private CanvasGroup prevButtonCanvasGroup; // <--- เพิ่ม CanvasGroup ให้ปุ่มย้อนกลับ
 
     private bool isTransitioning = false; 
 
@@ -86,12 +88,25 @@ public class QuizManager : MonoBehaviour
         if (nextButton != null)
         {
             nextButton.navigation = navNone;
-            nextButton.interactable = true; // เปิดไว้เสมอเพื่อไม่ให้สี Disabled Color (สีเทา) ทำงาน
+            nextButton.interactable = true;
 
             nextButtonCanvasGroup = nextButton.GetComponent<CanvasGroup>();
             if (nextButtonCanvasGroup == null)
             {
                 nextButtonCanvasGroup = nextButton.gameObject.AddComponent<CanvasGroup>();
+            }
+        }
+
+        // ตั้งค่า CanvasGroup และ Navigation ให้ปุ่มย้อนกลับ
+        if (prevButton != null)
+        {
+            prevButton.navigation = navNone;
+            prevButton.interactable = true;
+
+            prevButtonCanvasGroup = prevButton.GetComponent<CanvasGroup>();
+            if (prevButtonCanvasGroup == null)
+            {
+                prevButtonCanvasGroup = prevButton.gameObject.AddComponent<CanvasGroup>();
             }
         }
     }
@@ -109,6 +124,12 @@ public class QuizManager : MonoBehaviour
         {
             nextButton.onClick.RemoveAllListeners();
             nextButton.onClick.AddListener(NextQuestion);
+        }
+
+        if (prevButton != null)
+        {
+            prevButton.onClick.RemoveAllListeners();
+            prevButton.onClick.AddListener(PreviousQuestion);
         }
 
         ShowQuestion();
@@ -182,7 +203,6 @@ public class QuizManager : MonoBehaviour
         if (textA != null) textA.text = q.choiceA;
         if (textB != null) textB.text = q.choiceB;
 
-        // เช็คว่าข้อนี้เคยตอบไปแล้วหรือไม่ (เช่น ตอนกดย้อนกลับมาดู)
         bool hasAnswered = (currentQuestion < selectedChoiceIndices.Count && selectedChoiceIndices[currentQuestion] != 0);
 
         if (hasAnswered)
@@ -196,9 +216,8 @@ public class QuizManager : MonoBehaviour
             ResetChoiceButton();
         }
 
-        // คุมปุ่ม Next ให้อยู่ที่เดิมเสมอ แค่ปรับความโปร่งใสและการบล็อกคลิก
         UpdateNextButtonState(hasAnswered);
-
+        UpdatePrevButtonState(); // อัปเดตสถานะปุ่มย้อนกลับตามข้อปัจจุบัน
         UpdateProgressBar();
         isTransitioning = false;
     }
@@ -206,7 +225,7 @@ public class QuizManager : MonoBehaviour
     // =========================================================
     // ANSWER
     // =========================================================
-private void SelectAnswer(int answer)
+    private void SelectAnswer(int answer)
     {
         if (isTransitioning) return;
 
@@ -230,18 +249,14 @@ private void SelectAnswer(int answer)
         }
 
         UpdateProgressBar();
-
-        // เปิดปุ่ม Next ให้พร้อมกด
         UpdateNextButtonState(true);
 
-        // ถ้าเป็นข้อสุดท้ายให้อยู่หน้านี้ต่อ รอให้ผู้เล่นกดปุ่มถัดไปเอง
         bool isLastQuestion = (currentQuestion == questions.Count - 1);
         if (isLastQuestion)
         {
             return; 
         }
 
-        // ถ้ายังไม่ใช่ข้อสุดท้าย ให้เลื่อนข้ออัตโนมัติตามเดิม
         isTransitioning = true;
         StopAllCoroutines();
         StartCoroutine(AutoAdvanceRoutine());
@@ -290,16 +305,27 @@ private void SelectAnswer(int answer)
     {
         if (nextButton == null) return;
 
-        // ไม่ปิด GameObject เพื่อให้ Layout คงรูปเดิมเสมอ ไม่เด้ง
         nextButton.gameObject.SetActive(true);
         nextButton.interactable = true;
 
         if (nextButtonCanvasGroup != null)
         {
-            // ถ้าตอบแล้ว: สว่างเต็ม 100% และคลิกได้
-            // ถ้ายังไม่ตอบ: จางลงเป็นสีเดิมแบบโปร่งแสง (Alpha 0.4) ไม่กลายเป็นสีเทา และคลิกไม่โดน
             nextButtonCanvasGroup.alpha = canClick ? 1.0f : 0.4f;
             nextButtonCanvasGroup.blocksRaycasts = canClick;
+        }
+    }
+
+    // คุมปุ่มย้อนกลับ: ข้อ 1 ซ่อนหายไป (Alpha 0) ข้อ 2 เป็นต้นไปค่อยแสดง (Alpha 1)
+    private void UpdatePrevButtonState()
+    {
+        if (prevButton == null) return;
+
+        bool canGoBack = (currentQuestion > 0);
+
+        if (prevButtonCanvasGroup != null)
+        {
+            prevButtonCanvasGroup.alpha = canGoBack ? 1.0f : 0f;
+            prevButtonCanvasGroup.blocksRaycasts = canGoBack;
         }
     }
 
@@ -310,13 +336,11 @@ private void SelectAnswer(int answer)
     {
         if (isTransitioning) return;
 
-        // ต้องตอบข้อนี้ก่อนถึงจะกดไปต่อได้
         bool hasAnswered = (currentQuestion < selectedChoiceIndices.Count && selectedChoiceIndices[currentQuestion] != 0);
         if (!hasAnswered) return;
 
         StopAllCoroutines();
 
-        // ถ้าเป็นข้อสุดท้ายแล้วกดถัดไป ให้ไปหน้าผลลัพธ์เลย!
         if (currentQuestion >= questions.Count - 1)
         {
             FinishQuiz();
@@ -332,7 +356,7 @@ private void SelectAnswer(int answer)
     // =========================================================
     public void PreviousQuestion()
     {
-        if (currentQuestion <= 0) return;
+        if (isTransitioning || currentQuestion <= 0) return;
 
         StopAllCoroutines();
         currentQuestion--;
@@ -364,15 +388,11 @@ private void SelectAnswer(int answer)
     // =========================================================
     private void FinishQuiz()
     {
-        Debug.Log($"จบแบบทดสอบแล้ว! ตอบครบ {answers.Count} ข้อ");
+        Debug.Log($"จบแบบทดสอบ ตอบครบ {answers.Count} ข้อ");
 
-        // ปิดหน้า QuizCanvas
         if (quizCanvas != null) quizCanvas.SetActive(false);
-
-        // เปิดหน้า ResultCanvas
         if (resultCanvas != null) resultCanvas.SetActive(true);
 
-        // ส่งคำตอบไปให้ ResultManager คำนวณ MBTI และแสดงผล
         if (resultManager != null)
         {
             resultManager.ShowResult(answers);

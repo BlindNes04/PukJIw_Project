@@ -21,11 +21,11 @@ public class ResultManager : MonoBehaviour
     [SerializeField] private TextAsset resultCsvFile;
 
     [Header("Result UI")]
-    [SerializeField] private TMP_Text titleText;               // เช่น "คู่หูของคุณคือ.."
-    [SerializeField] private Image resultCharacterImage;       // รูปสัตว์คู่หู
-    [SerializeField] private TMP_Text resultBuddyNameText;     // เช่น "โลมาคลื่นน้ำใส"
-    [SerializeField] private TMP_Text resultSkillNameText;     // เช่น "Hearty Bond"
-    [SerializeField] private TMP_Text resultDescriptionText;   // รายละเอียดสกิล/คำอธิบาย
+    [SerializeField] private TMP_Text titleText;              
+    [SerializeField] private Image resultCharacterImage;      
+    [SerializeField] private TMP_Text resultBuddyNameText;     
+    [SerializeField] private TMP_Text resultSkillNameText;    
+    [SerializeField] private TMP_Text resultDescriptionText;  
 
     [Header("Fallback Settings")]
     [SerializeField] private Sprite defaultCharacterSprite;
