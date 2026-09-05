@@ -1954,7 +1954,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 94a3c5752061e924f9c4a3bd74cf5c8f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f776ed289ff5a4922965e491aef62125, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -2654,6 +2654,7 @@ GameObject:
   - component: {fileID: 1465075026}
   - component: {fileID: 1465075025}
   - component: {fileID: 1465075027}
+  - component: {fileID: 1465075028}
   m_Layer: 5
   m_Name: MainCharacter
   m_TagString: Untagged
@@ -2740,6 +2741,42 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1465075028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1465075023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ed5648a0106e41fd942a5fd3758faf7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterController
+  characterImage: {fileID: 1465075025}
+  rectTransform: {fileID: 1465075024}
+  stages:
+  - stageName: baby
+    sprite: {fileID: 21300000, guid: 79a8b902f38e845abb83dbb68739b80e, type: 3}
+    anchoredPosition: {x: 0, y: -260}
+    customSize: {x: 550, y: 550}
+  - stageName: teenage
+    sprite: {fileID: 21300000, guid: 0c9b97b900d904ccdace9bd2c9434df5, type: 3}
+    anchoredPosition: {x: -40, y: -200}
+    customSize: {x: 650, y: 650}
+  - stageName: adult
+    sprite: {fileID: 21300000, guid: 192b123e248124b919eedbb7e8514661, type: 3}
+    anchoredPosition: {x: -25, y: -150}
+    customSize: {x: 850, y: 850}
+  - stageName: evo good
+    sprite: {fileID: 21300000, guid: bff7910d2afe24532a7d00ea5d18be7b, type: 3}
+    anchoredPosition: {x: 0, y: -170}
+    customSize: {x: 1100, y: 1100}
+  - stageName: evo bad
+    sprite: {fileID: 21300000, guid: d897d6730d8fc4048a81626d760ae9d2, type: 3}
+    anchoredPosition: {x: 0, y: -170}
+    customSize: {x: 1100, y: 1100}
+  currentLevel: 1
 --- !u!1 &1515762473
 GameObject:
   m_ObjectHideFlags: 0
@@ -2844,7 +2881,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 791944973, guid: 7f98d45081c49be498216ddd0a314669, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d3a7d4bffcab144738305042484a2955, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3038,7 +3075,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c06254a1a2de117448bb5e99c57a6274, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b9dd6c811131d43f6aa6bcb2c9ebaf28, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
