@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -35,6 +36,9 @@ public class QuizManager : MonoBehaviour
     [SerializeField] private TMP_Text textA;
     [SerializeField] private TMP_Text textB;
 
+    [Header("Navigation UI")]
+    [SerializeField] private Button nextButton;
+
     [Header("Answered Sprite")]
     [SerializeField] private Sprite answeredChoice;
 
@@ -43,18 +47,28 @@ public class QuizManager : MonoBehaviour
     [SerializeField] private Sprite emptyProgressSprite;
     [SerializeField] private Sprite answeredProgressSprite;
 
+    [Header("Result Reference")]
+    [SerializeField] private GameObject quizCanvas;
+    [SerializeField] private GameObject resultCanvas;
+    [SerializeField] private ResultManager resultManager;
+
     [Header("Question Settings")]
     [SerializeField] private int questionsPerRound = 5;
+    [SerializeField] private float autoAdvanceDelay = 0.25f;
 
     private List<QuestionData> questions = new List<QuestionData>();
     private int currentQuestion = 0;
-    private int currentAnswer = 0;
+    
+    private List<int> selectedChoiceIndices = new List<int>();
     private List<string> answers = new List<string>();
 
     private Image buttonAImage;
     private Image buttonBImage;
     private Sprite originalSpriteA;
     private Sprite originalSpriteB;
+    private CanvasGroup nextButtonCanvasGroup;
+
+    private bool isTransitioning = false; 
 
     private void Awake()
     {
@@ -63,15 +77,39 @@ public class QuizManager : MonoBehaviour
 
         originalSpriteA = buttonAImage.sprite;
         originalSpriteB = buttonBImage.sprite;
+
+        // ปิด Navigation เพื่อป้องกันการส่ง Focus ซ้อนทับใน Unity UI
+        Navigation navNone = new Navigation { mode = Navigation.Mode.None };
+        buttonA.navigation = navNone;
+        buttonB.navigation = navNone;
+
+        if (nextButton != null)
+        {
+            nextButton.navigation = navNone;
+            nextButton.interactable = true; // เปิดไว้เสมอเพื่อไม่ให้สี Disabled Color (สีเทา) ทำงาน
+
+            nextButtonCanvasGroup = nextButton.GetComponent<CanvasGroup>();
+            if (nextButtonCanvasGroup == null)
+            {
+                nextButtonCanvasGroup = nextButton.gameObject.AddComponent<CanvasGroup>();
+            }
+        }
     }
 
     private void Start()
     {
-        Debug.Log(">>>working<<<");
         LoadCSV();
 
+        buttonA.onClick.RemoveAllListeners();
+        buttonB.onClick.RemoveAllListeners();
         buttonA.onClick.AddListener(() => SelectAnswer(1));
         buttonB.onClick.AddListener(() => SelectAnswer(2));
+
+        if (nextButton != null)
+        {
+            nextButton.onClick.RemoveAllListeners();
+            nextButton.onClick.AddListener(NextQuestion);
+        }
 
         ShowQuestion();
     }
@@ -101,7 +139,6 @@ public class QuizManager : MonoBehaviour
 
             string[] data = line.Split(',');
 
-            // ตรวจสอบว่าคอลัมน์ครบ 7 ช่องจริงไหม ป้องกัน Index หลุด
             if (data.Length < 7)
             {
                 Debug.LogWarning($"แถวที่ {i + 1} มีข้อมูลไม่ครบ 7 ช่อง: {line}");
@@ -128,6 +165,8 @@ public class QuizManager : MonoBehaviour
     // =========================================================
     private void ShowQuestion()
     {
+        StopAllCoroutines();
+
         if (currentQuestion >= questions.Count)
         {
             FinishQuiz();
@@ -136,47 +175,87 @@ public class QuizManager : MonoBehaviour
 
         QuestionData q = questions[currentQuestion];
 
-        sectionText.text = q.section;
-        questionNumberText.text = q.id;
-        questionText.text = q.question;
+        if (sectionText != null) sectionText.text = q.section;
+        if (questionNumberText != null) questionNumberText.text = q.id;
+        if (questionText != null) questionText.text = q.question;
 
-        textA.text = q.choiceA;
-        textB.text = q.choiceB;
+        if (textA != null) textA.text = q.choiceA;
+        if (textB != null) textB.text = q.choiceB;
 
-        currentAnswer = 0;
-        ResetChoiceButton();
+        // เช็คว่าข้อนี้เคยตอบไปแล้วหรือไม่ (เช่น ตอนกดย้อนกลับมาดู)
+        bool hasAnswered = (currentQuestion < selectedChoiceIndices.Count && selectedChoiceIndices[currentQuestion] != 0);
+
+        if (hasAnswered)
+        {
+            int savedChoice = selectedChoiceIndices[currentQuestion];
+            if (buttonAImage != null) SetAnsweredButton(buttonAImage, savedChoice == 1);
+            if (buttonBImage != null) SetAnsweredButton(buttonBImage, savedChoice == 2);
+        }
+        else
+        {
+            ResetChoiceButton();
+        }
+
+        // คุมปุ่ม Next ให้อยู่ที่เดิมเสมอ แค่ปรับความโปร่งใสและการบล็อกคลิก
+        UpdateNextButtonState(hasAnswered);
+
         UpdateProgressBar();
+        isTransitioning = false;
     }
 
     // =========================================================
     // ANSWER
     // =========================================================
-    private void SelectAnswer(int answer)
+private void SelectAnswer(int answer)
     {
-        Debug.Log("คลิกเลือกคำตอบ: " + answer);
-        currentAnswer = answer;
-        QuestionData q = questions[currentQuestion];
-        string target;
+        if (isTransitioning) return;
 
-        if (answer == 1)
+        QuestionData q = questions[currentQuestion];
+        string target = (answer == 1) ? q.choiceATarget : q.choiceBTarget;
+
+        if (buttonAImage != null) SetAnsweredButton(buttonAImage, answer == 1);
+        if (buttonBImage != null) SetAnsweredButton(buttonBImage, answer == 2);
+
+        bool isReviewingOldQuestion = (currentQuestion < selectedChoiceIndices.Count);
+
+        if (isReviewingOldQuestion)
         {
-            target = q.choiceATarget;
-            SetAnsweredButton(buttonAImage, true);
-            SetAnsweredButton(buttonBImage, false);
+            selectedChoiceIndices[currentQuestion] = answer;
+            answers[currentQuestion] = target;
         }
         else
         {
-            target = q.choiceBTarget;
-            SetAnsweredButton(buttonAImage, false);
-            SetAnsweredButton(buttonBImage, true);
+            selectedChoiceIndices.Add(answer);
+            answers.Add(target);
         }
 
-        answers.Add(target);
         UpdateProgressBar();
+
+        // เปิดปุ่ม Next ให้พร้อมกด
+        UpdateNextButtonState(true);
+
+        // ถ้าเป็นข้อสุดท้ายให้อยู่หน้านี้ต่อ รอให้ผู้เล่นกดปุ่มถัดไปเอง
+        bool isLastQuestion = (currentQuestion == questions.Count - 1);
+        if (isLastQuestion)
+        {
+            return; 
+        }
+
+        // ถ้ายังไม่ใช่ข้อสุดท้าย ให้เลื่อนข้ออัตโนมัติตามเดิม
+        isTransitioning = true;
+        StopAllCoroutines();
+        StartCoroutine(AutoAdvanceRoutine());
+    }
+
+    private IEnumerator AutoAdvanceRoutine()
+    {
+        yield return new WaitForSeconds(autoAdvanceDelay);
+        currentQuestion++;
+        ShowQuestion();
     }
 
     // =========================================================
-    // BUTTON COLOR / SPRITE
+    // BUTTON STATE / SPRITE
     // =========================================================
     private void SetAnsweredButton(Image image, bool answered)
     {
@@ -194,11 +273,34 @@ public class QuizManager : MonoBehaviour
 
     private void ResetChoiceButton()
     {
-        buttonAImage.sprite = originalSpriteA;
-        buttonBImage.sprite = originalSpriteB;
+        if (buttonAImage != null)
+        {
+            buttonAImage.sprite = originalSpriteA;
+            buttonAImage.color = Color.white;
+        }
 
-        buttonAImage.color = Color.white;
-        buttonBImage.color = Color.white;
+        if (buttonBImage != null)
+        {
+            buttonBImage.sprite = originalSpriteB;
+            buttonBImage.color = Color.white;
+        }
+    }
+
+    private void UpdateNextButtonState(bool canClick)
+    {
+        if (nextButton == null) return;
+
+        // ไม่ปิด GameObject เพื่อให้ Layout คงรูปเดิมเสมอ ไม่เด้ง
+        nextButton.gameObject.SetActive(true);
+        nextButton.interactable = true;
+
+        if (nextButtonCanvasGroup != null)
+        {
+            // ถ้าตอบแล้ว: สว่างเต็ม 100% และคลิกได้
+            // ถ้ายังไม่ตอบ: จางลงเป็นสีเดิมแบบโปร่งแสง (Alpha 0.4) ไม่กลายเป็นสีเทา และคลิกไม่โดน
+            nextButtonCanvasGroup.alpha = canClick ? 1.0f : 0.4f;
+            nextButtonCanvasGroup.blocksRaycasts = canClick;
+        }
     }
 
     // =========================================================
@@ -206,15 +308,22 @@ public class QuizManager : MonoBehaviour
     // =========================================================
     public void NextQuestion()
     {
-        if (currentAnswer == 0) return;
+        if (isTransitioning) return;
 
-        currentQuestion++;
+        // ต้องตอบข้อนี้ก่อนถึงจะกดไปต่อได้
+        bool hasAnswered = (currentQuestion < selectedChoiceIndices.Count && selectedChoiceIndices[currentQuestion] != 0);
+        if (!hasAnswered) return;
 
-        if (currentQuestion % questionsPerRound == 0)
+        StopAllCoroutines();
+
+        // ถ้าเป็นข้อสุดท้ายแล้วกดถัดไป ให้ไปหน้าผลลัพธ์เลย!
+        if (currentQuestion >= questions.Count - 1)
         {
-            ResetProgressBar();
+            FinishQuiz();
+            return;
         }
 
+        currentQuestion++;
         ShowQuestion();
     }
 
@@ -225,13 +334,8 @@ public class QuizManager : MonoBehaviour
     {
         if (currentQuestion <= 0) return;
 
+        StopAllCoroutines();
         currentQuestion--;
-
-        if (answers.Count > currentQuestion)
-        {
-            answers.RemoveAt(answers.Count - 1);
-        }
-
         ShowQuestion();
     }
 
@@ -240,23 +344,18 @@ public class QuizManager : MonoBehaviour
     // =========================================================
     private void UpdateProgressBar()
     {
-        if (progressImages == null) return;
+        if (progressImages == null || progressImages.Length == 0) return;
 
-        int positionInRound = currentQuestion % questionsPerRound;
+        int indexInRound = currentQuestion % questionsPerRound;
+        bool currentQuestionAnswered = (currentQuestion < selectedChoiceIndices.Count && selectedChoiceIndices[currentQuestion] != 0);
+        int filledCount = indexInRound + (currentQuestionAnswered ? 1 : 0);
 
         for (int i = 0; i < progressImages.Length; i++)
         {
-            progressImages[i].sprite = (i < positionInRound) ? answeredProgressSprite : emptyProgressSprite;
-        }
-    }
-
-    private void ResetProgressBar()
-    {
-        if (progressImages == null) return;
-
-        foreach (Image image in progressImages)
-        {
-            image.sprite = emptyProgressSprite;
+            if (progressImages[i] != null)
+            {
+                progressImages[i].sprite = (i < filledCount) ? answeredProgressSprite : emptyProgressSprite;
+            }
         }
     }
 
@@ -265,6 +364,18 @@ public class QuizManager : MonoBehaviour
     // =========================================================
     private void FinishQuiz()
     {
-        Debug.Log("จบแบบทดสอบแล้ว!");
+        Debug.Log($"จบแบบทดสอบแล้ว! ตอบครบ {answers.Count} ข้อ");
+
+        // ปิดหน้า QuizCanvas
+        if (quizCanvas != null) quizCanvas.SetActive(false);
+
+        // เปิดหน้า ResultCanvas
+        if (resultCanvas != null) resultCanvas.SetActive(true);
+
+        // ส่งคำตอบไปให้ ResultManager คำนวณ MBTI และแสดงผล
+        if (resultManager != null)
+        {
+            resultManager.ShowResult(answers);
+        }
     }
 }
