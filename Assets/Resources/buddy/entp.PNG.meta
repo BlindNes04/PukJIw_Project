@@ -5,9 +5,6 @@ TextureImporter:
   - first:
       213: 1136783949092455934
     second: entp_0
-  - first:
-      213: -6218862882227129029
-    second: entp_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -134,10 +131,10 @@ TextureImporter:
       name: entp_0
       rect:
         serializedVersion: 2
-        x: 688
-        y: 1303
-        width: 533
-        height: 375
+        x: 598
+        y: 144
+        width: 3138
+        height: 2719
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -148,28 +145,6 @@ TextureImporter:
       bones: []
       spriteID: ef585009afaa6cf00800000000000000
       internalID: 1136783949092455934
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: entp_1
-      rect:
-        serializedVersion: 2
-        x: 879
-        y: 144
-        width: 2770
-        height: 2719
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b357df5582922b9a0800000000000000
-      internalID: -6218862882227129029
       vertices: []
       indices: 
       edges: []
@@ -189,7 +164,6 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       entp_0: 1136783949092455934
-      entp_1: -6218862882227129029
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

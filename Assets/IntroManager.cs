@@ -5,12 +5,14 @@ using UnityEngine.UI;
 
 public class IntroManager : MonoBehaviour
 {
-    [Header("Canvases")]
+    [Header("All Canvases")]
     [SerializeField] private GameObject introCanvas;
     [SerializeField] private GameObject quizCanvas;
+    [SerializeField] private GameObject buddyCanvas;
+    [SerializeField] private GameObject seedCanvas;
 
     [Header("Quiz Manager Reference")]
-    [SerializeField] private QuizManager quizManager; // ลาก QuizManager จาก Hierarchy มาใส่ช่องนี้
+    [SerializeField] private QuizManager quizManager;
 
     [Header("Elements to Fade In")]
     [SerializeField] private Image logoImage;
@@ -27,13 +29,18 @@ public class IntroManager : MonoBehaviour
 
     private void Awake()
     {
+        if (introCanvas != null) introCanvas.SetActive(true);
+        if (quizCanvas != null) quizCanvas.SetActive(false);
+        if (buddyCanvas != null) buddyCanvas.SetActive(false);
+        if (seedCanvas != null) seedCanvas.SetActive(false);
+
         if (startButton != null)
         {
             startButtonImage = startButton.GetComponent<Image>();
             startButtonText = startButton.GetComponentInChildren<TMP_Text>();
         }
 
-        // ซ่อน elements
+        // ซ่อน Elements เพื่อเตรียม Fade In
         SetAlpha(logoImage, 0f);
         SetAlpha(welcomeText, 0f);
         SetAlpha(dialogueText, 0f);
@@ -45,9 +52,6 @@ public class IntroManager : MonoBehaviour
             startButton.onClick.RemoveAllListeners();
             startButton.onClick.AddListener(OnStartQuizClicked);
         }
-
-        if (introCanvas != null) introCanvas.SetActive(true);
-        if (quizCanvas != null) quizCanvas.SetActive(false);
     }
 
     private void Start()
@@ -57,19 +61,15 @@ public class IntroManager : MonoBehaviour
 
     private IEnumerator PlayIntroSequence()
     {
-        // 1. Logo
         yield return StartCoroutine(FadeGraphic(logoImage));
         yield return new WaitForSeconds(delayBetween);
 
-        // 2. Welcome
         yield return StartCoroutine(FadeGraphic(welcomeText));
         yield return new WaitForSeconds(delayBetween);
 
-        // 3. Dialogue
         yield return StartCoroutine(FadeGraphic(dialogueText));
         yield return new WaitForSeconds(delayBetween);
 
-        // 4. Start Button
         yield return StartCoroutine(FadeButtonRoutine());
 
         if (startButton != null)
@@ -127,18 +127,17 @@ public class IntroManager : MonoBehaviour
     }
 
     // =========================================================
-    // สลับไป QuizCanvas
+    // Switch to QuizCanvas
     // =========================================================
     public void OnStartQuizClicked()
     {
         if (introCanvas != null) introCanvas.SetActive(false);
         if (quizCanvas != null) quizCanvas.SetActive(true);
 
-        // สั่งให้ QuizManager เริ่มทำงาน
         if (quizManager != null)
         {
             quizManager.gameObject.SetActive(true);
-            quizManager.enabled = true;
+            quizManager.StartQuiz(); 
         }
     }
 }

@@ -21,7 +21,7 @@ public class QuestionData
 
 public class QuizManager : MonoBehaviour
 {
-    [Header("CSV")]
+    [Header("CSV File")]
     [SerializeField] private TextAsset csvFile;
 
     [Header("Question UI")]
@@ -48,10 +48,10 @@ public class QuizManager : MonoBehaviour
     [SerializeField] private Sprite emptyProgressSprite;
     [SerializeField] private Sprite answeredProgressSprite;
 
-    [Header("Result Reference")]
+    [Header("Next Canvas Reference")]
     [SerializeField] private GameObject quizCanvas;
-    [SerializeField] private GameObject resultCanvas;
-    [SerializeField] private ResultManager resultManager;
+    [SerializeField] private GameObject buddyCanvas;
+    [SerializeField] private BuddyManager buddyManager;
 
     [Header("Question Settings")]
     [SerializeField] private int questionsPerRound = 5;
@@ -68,28 +68,29 @@ public class QuizManager : MonoBehaviour
     private Sprite originalSpriteA;
     private Sprite originalSpriteB;
     private CanvasGroup nextButtonCanvasGroup;
-    private CanvasGroup prevButtonCanvasGroup; // <--- เพิ่ม CanvasGroup ให้ปุ่มย้อนกลับ
+    private CanvasGroup prevButtonCanvasGroup;
 
     private bool isTransitioning = false; 
 
     private void Awake()
     {
-        buttonAImage = buttonA.GetComponent<Image>();
-        buttonBImage = buttonB.GetComponent<Image>();
+        if (buttonA != null)
+        {
+            buttonAImage = buttonA.GetComponent<Image>();
+            if (buttonAImage != null) originalSpriteA = buttonAImage.sprite;
+            buttonA.navigation = new Navigation { mode = Navigation.Mode.None };
+        }
 
-        originalSpriteA = buttonAImage.sprite;
-        originalSpriteB = buttonBImage.sprite;
-
-        // ปิด Navigation เพื่อป้องกันการส่ง Focus ซ้อนทับใน Unity UI
-        Navigation navNone = new Navigation { mode = Navigation.Mode.None };
-        buttonA.navigation = navNone;
-        buttonB.navigation = navNone;
+        if (buttonB != null)
+        {
+            buttonBImage = buttonB.GetComponent<Image>();
+            if (buttonBImage != null) originalSpriteB = buttonBImage.sprite;
+            buttonB.navigation = new Navigation { mode = Navigation.Mode.None };
+        }
 
         if (nextButton != null)
         {
-            nextButton.navigation = navNone;
-            nextButton.interactable = true;
-
+            nextButton.navigation = new Navigation { mode = Navigation.Mode.None };
             nextButtonCanvasGroup = nextButton.GetComponent<CanvasGroup>();
             if (nextButtonCanvasGroup == null)
             {
@@ -97,12 +98,9 @@ public class QuizManager : MonoBehaviour
             }
         }
 
-        // ตั้งค่า CanvasGroup และ Navigation ให้ปุ่มย้อนกลับ
         if (prevButton != null)
         {
-            prevButton.navigation = navNone;
-            prevButton.interactable = true;
-
+            prevButton.navigation = new Navigation { mode = Navigation.Mode.None };
             prevButtonCanvasGroup = prevButton.GetComponent<CanvasGroup>();
             if (prevButtonCanvasGroup == null)
             {
@@ -111,14 +109,26 @@ public class QuizManager : MonoBehaviour
         }
     }
 
-    private void Start()
+    public void StartQuiz()
     {
         LoadCSV();
 
-        buttonA.onClick.RemoveAllListeners();
-        buttonB.onClick.RemoveAllListeners();
-        buttonA.onClick.AddListener(() => SelectAnswer(1));
-        buttonB.onClick.AddListener(() => SelectAnswer(2));
+        currentQuestion = 0;
+        selectedChoiceIndices.Clear();
+        answers.Clear();
+        isTransitioning = false;
+
+        if (buttonA != null)
+        {
+            buttonA.onClick.RemoveAllListeners();
+            buttonA.onClick.AddListener(() => SelectAnswer(1));
+        }
+
+        if (buttonB != null)
+        {
+            buttonB.onClick.RemoveAllListeners();
+            buttonB.onClick.AddListener(() => SelectAnswer(2));
+        }
 
         if (nextButton != null)
         {
@@ -135,23 +145,17 @@ public class QuizManager : MonoBehaviour
         ShowQuestion();
     }
 
-    // =========================================================
-    // LOAD CSV 
-    // =========================================================
     private void LoadCSV()
     {
         if (csvFile == null)
         {
-            Debug.LogError("ยังไม่ได้ลากไฟล์ CSV ใส่ในช่อง Csv File ของ QuizManager!");
+            Debug.LogError("ยังไม่ได้ลากไฟล์ CSV ใส่ในช่อง CSV File ของ QuizManager!");
             return;
         }
 
         questions.Clear();
 
-        string[] lines = csvFile.text.Split(
-            new[] { '\r', '\n' },
-            StringSplitOptions.RemoveEmptyEntries
-        );
+        string[] lines = csvFile.text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -159,12 +163,7 @@ public class QuizManager : MonoBehaviour
             if (string.IsNullOrEmpty(line)) continue;
 
             string[] data = line.Split(',');
-
-            if (data.Length < 7)
-            {
-                Debug.LogWarning($"แถวที่ {i + 1} มีข้อมูลไม่ครบ 7 ช่อง: {line}");
-                continue;
-            }
+            if (data.Length < 7) continue;
 
             questions.Add(new QuestionData
             {
@@ -177,16 +176,17 @@ public class QuizManager : MonoBehaviour
                 choiceBTarget = data[6].Trim()
             });
         }
-
-        Debug.Log($"โหลดคำถามสำเร็จทั้งหมด: {questions.Count} ข้อ");
     }
 
-    // =========================================================
-    // SHOW QUESTION
-    // =========================================================
     private void ShowQuestion()
     {
         StopAllCoroutines();
+
+        if (questions == null || questions.Count == 0)
+        {
+            Debug.LogError("ไม่มีข้อมูลคำถามใน List!");
+            return;
+        }
 
         if (currentQuestion >= questions.Count)
         {
@@ -217,14 +217,11 @@ public class QuizManager : MonoBehaviour
         }
 
         UpdateNextButtonState(hasAnswered);
-        UpdatePrevButtonState(); // อัปเดตสถานะปุ่มย้อนกลับตามข้อปัจจุบัน
+        UpdatePrevButtonState(); 
         UpdateProgressBar();
         isTransitioning = false;
     }
 
-    // =========================================================
-    // ANSWER
-    // =========================================================
     private void SelectAnswer(int answer)
     {
         if (isTransitioning) return;
@@ -252,10 +249,7 @@ public class QuizManager : MonoBehaviour
         UpdateNextButtonState(true);
 
         bool isLastQuestion = (currentQuestion == questions.Count - 1);
-        if (isLastQuestion)
-        {
-            return; 
-        }
+        if (isLastQuestion) return; 
 
         isTransitioning = true;
         StopAllCoroutines();
@@ -269,9 +263,6 @@ public class QuizManager : MonoBehaviour
         ShowQuestion();
     }
 
-    // =========================================================
-    // BUTTON STATE / SPRITE
-    // =========================================================
     private void SetAnsweredButton(Image image, bool answered)
     {
         if (image == buttonAImage)
@@ -315,7 +306,6 @@ public class QuizManager : MonoBehaviour
         }
     }
 
-    // คุมปุ่มย้อนกลับ: ข้อ 1 ซ่อนหายไป (Alpha 0) ข้อ 2 เป็นต้นไปค่อยแสดง (Alpha 1)
     private void UpdatePrevButtonState()
     {
         if (prevButton == null) return;
@@ -329,9 +319,6 @@ public class QuizManager : MonoBehaviour
         }
     }
 
-    // =========================================================
-    // NEXT
-    // =========================================================
     public void NextQuestion()
     {
         if (isTransitioning) return;
@@ -351,9 +338,6 @@ public class QuizManager : MonoBehaviour
         ShowQuestion();
     }
 
-    // =========================================================
-    // BACK
-    // =========================================================
     public void PreviousQuestion()
     {
         if (isTransitioning || currentQuestion <= 0) return;
@@ -363,9 +347,6 @@ public class QuizManager : MonoBehaviour
         ShowQuestion();
     }
 
-    // =========================================================
-    // PROGRESS BAR
-    // =========================================================
     private void UpdateProgressBar()
     {
         if (progressImages == null || progressImages.Length == 0) return;
@@ -384,18 +365,17 @@ public class QuizManager : MonoBehaviour
     }
 
     // =========================================================
-    // FINISH
+    // switch to BuddyCanvas
     // =========================================================
     private void FinishQuiz()
     {
-        Debug.Log($"จบแบบทดสอบ ตอบครบ {answers.Count} ข้อ");
-
         if (quizCanvas != null) quizCanvas.SetActive(false);
-        if (resultCanvas != null) resultCanvas.SetActive(true);
+        if (buddyCanvas != null) buddyCanvas.SetActive(true);
 
-        if (resultManager != null)
+        if (buddyManager != null)
         {
-            resultManager.ShowResult(answers);
+            buddyManager.gameObject.SetActive(true);
+            buddyManager.ShowResult(answers);
         }
     }
 }

@@ -15,24 +15,21 @@ public class ResultData
     public string skillDescription;
 }
 
-public class ResultManager : MonoBehaviour
+public class BuddyManager : MonoBehaviour
 {
     [Header("CSV File")]
     [SerializeField] private TextAsset resultCsvFile;
 
-    [Header("Result UI")]
-    [SerializeField] private TMP_Text titleText;              
+    [Header("Buddy Result UI")]
+    [SerializeField] private TMP_Text titleText;               
     [SerializeField] private Image resultCharacterImage;      
     [SerializeField] private TMP_Text resultBuddyNameText;     
     [SerializeField] private TMP_Text resultSkillNameText;    
     [SerializeField] private TMP_Text resultDescriptionText;  
 
-    [Header("Fallback Settings")]
-    [SerializeField] private Sprite defaultCharacterSprite;
-
-    [Header("Canvas Transition")]
-    [SerializeField] private GameObject resultCanvas;
-    [SerializeField] private GameObject seedCanvas;
+    [Header("Canvas & Next Manager")]
+    [SerializeField] private GameObject buddyCanvas;
+    [SerializeField] private SeedManager seedManager;
 
     [Header("Next Button")]
     [SerializeField] private Button nextButton;
@@ -44,14 +41,8 @@ public class ResultManager : MonoBehaviour
     private Dictionary<string, ResultData> resultDatabase = new Dictionary<string, ResultData>(StringComparer.OrdinalIgnoreCase);
     private CanvasGroup nextButtonCanvasGroup;
 
-private void Awake()
+    private void Awake()
     {
-        // ปิด ResultCanvas
-        if (resultCanvas != null)
-        {
-            resultCanvas.SetActive(false);
-        }
-
         LoadResultCSV();
 
         if (nextButton != null)
@@ -67,6 +58,7 @@ private void Awake()
             nextButton.onClick.AddListener(GoToSeedCanvas);
         }
     }
+
     private void LoadResultCSV()
     {
         if (resultCsvFile == null) return;
@@ -96,6 +88,11 @@ private void Awake()
 
     public void ShowResult(List<string> answeredTargets)
     {
+        if (buddyCanvas != null)
+        {
+            buddyCanvas.SetActive(true);
+        }
+
         int scoreE = 0, scoreI = 0;
         int scoreS = 0, scoreN = 0;
         int scoreT = 0, scoreF = 0;
@@ -126,7 +123,6 @@ private void Awake()
 
     private void PrepareResultUI(string mbtiKey)
     {
-        // ซ่อนทุกอันก่อนเริ่ม Fade-in
         SetAlpha(titleText, 0f);
         SetAlpha(resultCharacterImage, 0f);
         SetAlpha(resultBuddyNameText, 0f);
@@ -145,7 +141,7 @@ private void Awake()
             if (resultSkillNameText != null) resultSkillNameText.text = data.skillName;
             if (resultDescriptionText != null) resultDescriptionText.text = data.skillDescription;
 
-            LoadCharacterSprite(data.mbtiType.ToLower());
+            LoadCharacterSprite(data.mbtiType);
         }
         else
         {
@@ -153,7 +149,7 @@ private void Awake()
             if (resultSkillNameText != null) resultSkillNameText.text = "";
             if (resultDescriptionText != null) resultDescriptionText.text = "ยินดีด้วย คุณทำแบบทดสอบสำเร็จแล้ว!";
 
-            LoadCharacterSprite(mbtiKey.ToLower());
+            LoadCharacterSprite(mbtiKey);
         }
     }
 
@@ -162,7 +158,7 @@ private void Awake()
         if (resultCharacterImage == null) return;
 
         Sprite loadedSprite = Resources.Load<Sprite>("buddy/" + imageName.Trim().ToLower());
-        resultCharacterImage.sprite = (loadedSprite != null) ? loadedSprite : defaultCharacterSprite;
+        resultCharacterImage.sprite = loadedSprite;
         resultCharacterImage.preserveAspect = true;
     }
 
@@ -186,7 +182,7 @@ private void Awake()
         yield return StartCoroutine(FadeGraphic(resultDescriptionText));
         yield return new WaitForSeconds(delayBetween);
 
-        yield return StartCoroutine(FadeCanvasGroup(nextButtonCanvasGroup));
+        yield return StartCoroutine(FadeGraphic(nextButtonCanvasGroup));
         if (nextButtonCanvasGroup != null) nextButtonCanvasGroup.blocksRaycasts = true;
     }
 
@@ -209,7 +205,7 @@ private void Awake()
         graphic.color = c;
     }
 
-    private IEnumerator FadeCanvasGroup(CanvasGroup cg)
+    private IEnumerator FadeGraphic(CanvasGroup cg)
     {
         if (cg == null) yield break;
 
@@ -231,9 +227,16 @@ private void Awake()
         graphic.color = c;
     }
 
+    // =========================================================
+    // Switch to SeedCanvas
+    // =========================================================
     private void GoToSeedCanvas()
     {
-        if (resultCanvas != null) resultCanvas.SetActive(false);
-        if (seedCanvas != null) seedCanvas.SetActive(true);
+        if (buddyCanvas != null) buddyCanvas.SetActive(false);
+
+        if (seedManager != null)
+        {
+            seedManager.OpenSeedReward();
+        }
     }
 }
