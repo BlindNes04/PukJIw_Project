@@ -2701,7 +2701,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d897d6730d8fc4048a81626d760ae9d2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7b30a0aef535e4e588a4d15459f6a64c, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -2757,7 +2757,7 @@ MonoBehaviour:
   rectTransform: {fileID: 1465075024}
   stages:
   - stageName: baby
-    sprite: {fileID: 21300000, guid: 79a8b902f38e845abb83dbb68739b80e, type: 3}
+    sprite: {fileID: 21300000, guid: 895e9bc0c244b43fcaff09149f49e35c, type: 3}
     anchoredPosition: {x: 0, y: -260}
     customSize: {x: 550, y: 550}
   - stageName: teenage
@@ -2768,12 +2768,12 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: 192b123e248124b919eedbb7e8514661, type: 3}
     anchoredPosition: {x: -25, y: -150}
     customSize: {x: 850, y: 850}
-  - stageName: evo good
-    sprite: {fileID: 21300000, guid: bff7910d2afe24532a7d00ea5d18be7b, type: 3}
+  - stageName: evo angel
+    sprite: {fileID: 21300000, guid: 33e5db802dc6a4f8c812b2b8dcd5c1bb, type: 3}
     anchoredPosition: {x: 0, y: -170}
     customSize: {x: 1100, y: 1100}
-  - stageName: evo bad
-    sprite: {fileID: 21300000, guid: d897d6730d8fc4048a81626d760ae9d2, type: 3}
+  - stageName: evo devil
+    sprite: {fileID: 21300000, guid: 7b30a0aef535e4e588a4d15459f6a64c, type: 3}
     anchoredPosition: {x: 0, y: -170}
     customSize: {x: 1100, y: 1100}
   currentLevel: 1
