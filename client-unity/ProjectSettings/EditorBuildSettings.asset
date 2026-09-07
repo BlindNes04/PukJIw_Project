@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/LoadingScene.unity
     guid: ef22318c0157a4ab4ad75881250eb517
   - enabled: 1
+    path: Assets/Scenes/Quiz.unity
+    guid: 86a48a7c6a88c13439826ce4691a6095
+  - enabled: 1
     path: Assets/Scenes/MBTIDummy.unity
     guid: ba2bd0f32fa804decb003ac82b4eece6
   - enabled: 1

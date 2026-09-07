@@ -597,7 +597,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LoadingManager
   loadingSlider: {fileID: 780651573}
-  mbtiSceneName: MBTIDummy
+  mbtiSceneName: Quiz
   mainGameSceneName: MainForest
 --- !u!1 &1282386573
 GameObject:
