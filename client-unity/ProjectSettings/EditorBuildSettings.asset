@@ -12,9 +12,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Quiz.unity
     guid: 86a48a7c6a88c13439826ce4691a6095
   - enabled: 1
-    path: Assets/Scenes/MBTIDummy.unity
-    guid: ba2bd0f32fa804decb003ac82b4eece6
-  - enabled: 1
     path: Assets/Scenes/MainForest.unity
     guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects:
