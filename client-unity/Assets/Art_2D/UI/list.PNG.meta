@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d9268402f6fed4788a614370f349d630
+guid: 0568af2bb62c44995bb16f1cdd91083b
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: minigame_0
+      name: list_0
       rect:
         serializedVersion: 2
-        x: 470
-        y: 91
-        width: 2824
-        height: 2676
+        x: 478
+        y: 1005
+        width: 3041
+        height: 1117
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -112,8 +112,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 72191a97559694e29a2b6e6c0289666f
-      internalID: 69473363
+      spriteID: 2b679e65a47c44e179ba68c7e0210497
+      internalID: -954830235
       vertices: []
       indices: 
       edges: []
@@ -134,7 +134,7 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      minigame_0: 69473363
+      list_0: -954830235
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

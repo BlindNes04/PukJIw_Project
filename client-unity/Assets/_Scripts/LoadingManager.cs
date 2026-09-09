@@ -9,8 +9,8 @@ public class LoadingManager : MonoBehaviour
     public Slider loadingSlider;
 
     [Header("Target Scene Names")]
-    public string mbtiSceneName = "MBTI_Dummy";
-    public string mainGameSceneName = "SampleScene";
+    public string mbtiSceneName = "Quiz";
+    public string mainGameSceneName = "MainForest";
 
     void Start()
     {
