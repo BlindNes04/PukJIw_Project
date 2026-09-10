@@ -117,6 +117,9 @@ public class BuddyManager : MonoBehaviour
         finalMBTI += (scoreT >= scoreF) ? "T" : "F";
         finalMBTI += (scoreJ >= scoreP) ? "J" : "P";
 
+        PlayerPrefs.SetString("PlayerMBTI", finalMBTI);
+        PlayerPrefs.Save();
+
         PrepareResultUI(finalMBTI);
         StartCoroutine(PlayResultFadeSequence());
     }

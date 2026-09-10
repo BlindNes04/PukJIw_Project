@@ -286,6 +286,7 @@ GameObject:
   - component: {fileID: 181064735}
   - component: {fileID: 181064734}
   - component: {fileID: 181064733}
+  - component: {fileID: 181064736}
   m_Layer: 5
   m_Name: BuddyCharacter
   m_TagString: Untagged
@@ -310,7 +311,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 380, y: -450}
-  m_SizeDelta: {x: 400, y: 400}
+  m_SizeDelta: {x: 460, y: 450}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &181064733
 Animator:
@@ -354,7 +355,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 03f2610c81a8b824fa571ae9f8c8dbe0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f3647df54e501fd4cbae90879798ed98, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -372,6 +373,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 181064731}
   m_CullTransparentMesh: 1
+--- !u!114 &181064736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181064731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a3b6c6d5557c4cc8a97d78db72619d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuddyDisplay
 --- !u!1 &193150663
 GameObject:
   m_ObjectHideFlags: 0
