@@ -1877,6 +1877,7 @@ GameObject:
   - component: {fileID: 793184013}
   - component: {fileID: 793184012}
   - component: {fileID: 793184011}
+  - component: {fileID: 793184014}
   m_Layer: 5
   m_Name: MinigamesBtn
   m_TagString: Untagged
@@ -1946,7 +1947,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 793184009}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 793184014}
+        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
+        m_MethodName: LoadNextScene
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: MixFertilizer
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &793184009
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2038,6 +2051,18 @@ Animation:
   m_AnimatePhysics: 0
   m_UpdateMode: 0
   m_CullingType: 0
+--- !u!114 &793184014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 793184006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae7bcbc0c4ab42c99c6856c9337b6ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneLoader
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
