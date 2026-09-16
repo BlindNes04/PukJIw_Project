@@ -3,94 +3,107 @@ using UnityEngine;
 
 public class MainMenuManager : MonoBehaviour
 {
-    [Header("Panels (Canvas Groups)")]
-    [SerializeField] private CanvasGroup mainMenuCG;
-    [SerializeField] private CanvasGroup loginCG;
+    [Header("Panels")]
+    [SerializeField] private GameObject mainMenuPanel;
+    [SerializeField] private GameObject loginPanel;
 
-    [Header("Fade Settings")]
-    [SerializeField] private float fadeDuration = 0.3f;
+    [Header("UI Cards (Canvas Group)")]
+    [SerializeField] private CanvasGroup loginMethodCard;
+    [SerializeField] private CanvasGroup loginCard;
+    [SerializeField] private CanvasGroup registerCard;
 
-    private Coroutine activeTransition;
+    [Header("Sequence Settings")]
+    [Tooltip("ระยะเวลารอ Logo เล่นจบ (วินาที) ก่อนเปิดการ์ด")]
+    [SerializeField] private float logoWaitTime = 0.8f; 
+    [SerializeField] private float fadeDuration = 0.2f;
+
+    private CanvasGroup currentActiveCard;
+    private bool isSwitching = false;
 
     private void Start()
     {
-        // เริ่มเกม: หน้า Main ชัดสุด / หน้า Login ปิดไว้
-        SetCanvasGroupState(mainMenuCG, true);
-        
-        loginCG.alpha = 0f;
-        loginCG.gameObject.SetActive(false);
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
+        if (loginPanel != null) loginPanel.SetActive(false);
     }
 
-    // ผูกกับปุ่ม "เข้าสู่ระบบ" (จากหน้า Main ไป Login)
-    public void OnClickLoginFromMain()
+    // --- 1. ปุ่ม "เข้าสู่ระบบ" จากหน้าแรก (GrowGo) ---
+    public void OnClickOpenLogin()
     {
-        if (activeTransition != null) StopCoroutine(activeTransition);
-        activeTransition = StartCoroutine(TransitionToLoginRoutine());
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
+        if (loginPanel != null) loginPanel.SetActive(true);
+
+        // ซ่อนการ์ดทุกใบไว้ก่อน ให้ผู้เล่นเห็นเฉพาะ Logo เล่นแอนิเมชัน
+        SetupCard(loginMethodCard, false);
+        SetupCard(loginCard, false);
+        SetupCard(registerCard, false);
+
+        // รอเวลาให้ Logo เล่นจบ แล้วค่อยปล่อยการ์ดแรกเด้งขึ้นมา
+        StartCoroutine(ShowMethodCardAfterLogo());
     }
 
-    // ผูกกับปุ่ม "ย้อนกลับ" (จากหน้า Login กลับมา Main)
-    public void OnClickBackToMain()
+    private IEnumerator ShowMethodCardAfterLogo()
     {
-        if (activeTransition != null) StopCoroutine(activeTransition);
-        activeTransition = StartCoroutine(TransitionToMainRoutine());
+        yield return new WaitForSeconds(logoWaitTime);
+
+        // ครบเวลาแล้วค่อยเปิดการ์ด (แอนิเมชันเด้งของการ์ดจะเริ่มทำงานทันที ณ จังหวะนี้)
+        SetupCard(loginMethodCard, true);
+        currentActiveCard = loginMethodCard;
     }
 
-    private IEnumerator TransitionToLoginRoutine()
+    // --- 2. ฟังก์ชันสลับการ์ด ---
+    public void OpenLogin() => SwitchToCard(loginCard);
+    public void OpenRegister() => SwitchToCard(registerCard);
+    public void BackToMethod() => SwitchToCard(loginMethodCard);
+
+    // --- 3. ปุ่มย้อนกลับไปหน้าแรก (GrowGo) ---
+    public void BackToMainMenu()
     {
-        // 1. ปิดคลิกหน้า Main แล้ว Fade Out ให้หายไป
-        mainMenuCG.interactable = false;
-        mainMenuCG.blocksRaycasts = false;
-
-        yield return StartCoroutine(FadeRoutine(mainMenuCG, 1f, 0f));
-        mainMenuCG.gameObject.SetActive(false);
-
-        // 2. จอว่างเสี้ยววินาที
-        yield return new WaitForSeconds(0.08f);
-
-        // 3. เปิดหน้า Login (รีเซ็ต alpha = 1 เพื่อให้อนิเมชันเด้งเล่นได้ชัดเจน)
-        loginCG.gameObject.SetActive(true);
-        loginCG.alpha = 1f;
-        loginCG.interactable = true;
-        loginCG.blocksRaycasts = true;
+        if (loginPanel != null) loginPanel.SetActive(false);
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
     }
 
-    private IEnumerator TransitionToMainRoutine()
+    private void SwitchToCard(CanvasGroup nextCard)
     {
-        // 1. ปิดคลิกหน้า Login แล้วค่อยๆ Fade Out ออกไป
-        loginCG.interactable = false;
-        loginCG.blocksRaycasts = false;
-
-        yield return StartCoroutine(FadeRoutine(loginCG, 1f, 0f));
-        loginCG.gameObject.SetActive(false);
-
-        // 2. จอว่างเสี้ยววินาที
-        yield return new WaitForSeconds(0.08f);
-
-        // 3. เปิดหน้า Main แล้วค่อยๆ Fade In กลับขึ้นมา
-        mainMenuCG.gameObject.SetActive(true);
-        mainMenuCG.alpha = 0f;
-
-        yield return StartCoroutine(FadeRoutine(mainMenuCG, 0f, 1f));
-        SetCanvasGroupState(mainMenuCG, true);
+        if (isSwitching || currentActiveCard == nextCard || nextCard == null) return;
+        StartCoroutine(SwitchRoutine(currentActiveCard, nextCard));
     }
 
-    // ฟังก์ชันช่วยเกลี่ย Fade Alpha นุ่มๆ
-    private IEnumerator FadeRoutine(CanvasGroup cg, float startAlpha, float targetAlpha)
+    private IEnumerator SwitchRoutine(CanvasGroup fromCard, CanvasGroup toCard)
     {
-        float timer = 0f;
-        while (timer < fadeDuration)
+        isSwitching = true;
+
+        if (fromCard != null)
         {
-            timer += Time.deltaTime;
-            cg.alpha = Mathf.Lerp(startAlpha, targetAlpha, timer / fadeDuration);
-            yield return null;
+            fromCard.interactable = false;
+            fromCard.blocksRaycasts = false;
+
+            float timer = 0f;
+            float startAlpha = fromCard.alpha;
+
+            while (timer < fadeDuration)
+            {
+                timer += Time.deltaTime;
+                fromCard.alpha = Mathf.Lerp(startAlpha, 0f, timer / fadeDuration);
+                yield return null;
+            }
+
+            fromCard.alpha = 0f;
+            fromCard.gameObject.SetActive(false);
         }
-        cg.alpha = targetAlpha;
+
+        SetupCard(toCard, true);
+        currentActiveCard = toCard;
+
+        isSwitching = false;
     }
 
-    private void SetCanvasGroupState(CanvasGroup cg, bool isActive)
+    private void SetupCard(CanvasGroup cg, bool show)
     {
-        cg.alpha = isActive ? 1f : 0f;
-        cg.interactable = isActive;
-        cg.blocksRaycasts = isActive;
+        if (cg == null) return;
+
+        cg.gameObject.SetActive(show);
+        cg.alpha = show ? 1f : 0f;
+        cg.interactable = show;
+        cg.blocksRaycasts = show;
     }
 }
