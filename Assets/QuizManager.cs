@@ -167,7 +167,7 @@ public class QuizManager : MonoBehaviour
 
             questions.Add(new QuestionData
             {
-                id = data[0].Trim(),
+                id = data[0].Trim().Trim('\"'), 
                 section = data[1].Trim(),
                 question = data[2].Trim(),
                 choiceA = data[3].Trim(),

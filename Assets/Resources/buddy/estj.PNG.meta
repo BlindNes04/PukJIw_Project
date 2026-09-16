@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 7af32539d7d944b43a4711e7ac407c5f
+guid: 51d0629c9baf32141a61548d5aae3d77
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1374029622995758400
-    second: infj short_0
+      213: -2896635286052054203
+    second: estj_0
+  - first:
+      213: -7205354146351087923
+    second: estj_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -128,13 +131,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: infj short_0
+      name: estj_0
       rect:
         serializedVersion: 2
-        x: 519
-        y: 49
-        width: 1972
-        height: 2923
+        x: 406
+        y: 1479
+        width: 540
+        height: 1145
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -143,8 +146,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0c2597a76577eece0800000000000000
-      internalID: -1374029622995758400
+      spriteID: 54b510bed851dc7d0800000000000000
+      internalID: -2896635286052054203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: estj_1
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 62
+        width: 2594
+        height: 2909
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dcefad95490710c90800000000000000
+      internalID: -7205354146351087923
       vertices: []
       indices: 
       edges: []
@@ -163,7 +188,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      infj short_0: -1374029622995758400
+      estj_0: -2896635286052054203
+      estj_1: -7205354146351087923
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

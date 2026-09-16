@@ -771,7 +771,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u0E22\u0E34\u0E19\u0E14\u0E35\u0E15\u0E49\u0E2D\u0E19\u0E23\u0E31\u0E1A\u0E40\u0E02\u0E49\u0E32\u0E2A\u0E39\u0E48 (\u0E0A\u0E37\u0E48\u0E2D\u0E40\u0E01\u0E21)!"
+  m_text: "\u0E22\u0E34\u0E19\u0E14\u0E35\u0E15\u0E49\u0E2D\u0E19\u0E23\u0E31\u0E1A\u0E40\u0E02\u0E49\u0E32\u0E2A\u0E39\u0E48 GrowGo!"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c251f96d393bf054d907ac2df6ed504f, type: 2}
   m_sharedMaterial: {fileID: -2205642066420432197, guid: c251f96d393bf054d907ac2df6ed504f, type: 2}
@@ -2287,7 +2287,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -80.137}
-  m_SizeDelta: {x: 816.4872, y: -160.2747}
+  m_SizeDelta: {x: 1179.456, y: -160.2747}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &870817728
 MonoBehaviour:
@@ -2947,7 +2947,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eff5f974f1a6dd849836e63ce2a946c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuizManager
-  csvFile: {fileID: 4900000, guid: 75f34ec0cc01b904395ae4e017a2b176, type: 3}
+  csvFile: {fileID: 4900000, guid: b0641f5f4cb637b4abbbeed4ee6fc969, type: 3}
   sectionText: {fileID: 1985337670}
   questionNumberText: {fileID: 520335592}
   questionText: {fileID: 89512152}
@@ -5145,7 +5145,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 689}
-  m_SizeDelta: {x: 550, y: 550}
+  m_SizeDelta: {x: 600, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1874977421
 MonoBehaviour:
@@ -5167,7 +5167,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 8761186655450996743, guid: f8eb1eae6c0407248b7c1dfb94de7771, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
