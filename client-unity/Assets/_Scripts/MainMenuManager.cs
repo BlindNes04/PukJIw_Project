@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
@@ -40,6 +41,21 @@ public class MainMenuManager : MonoBehaviour
         // รอเวลาให้ Logo เล่นจบ แล้วค่อยปล่อยการ์ดแรกเด้งขึ้นมา
         StartCoroutine(ShowMethodCardAfterLogo());
     }
+
+public void OnClickPlay()
+{
+    // เช็กชื่อคีย์ "HasCompletedMBTI" ให้ตรงกับที่เคยเซฟไว้
+    bool hasCompletedMBTI = PlayerPrefs.GetInt("HasCompletedMBTI", 0) == 1;
+
+    if (hasCompletedMBTI)
+    {
+        SceneManager.LoadScene("MainForest"); // เคยเล่นแล้ว -> เข้าฟาร์มหลัก
+    }
+    else
+    {
+        SceneManager.LoadScene("Quiz"); // เข้าครั้งแรก -> ไปทำ Quiz
+    }
+}
 
     private IEnumerator ShowMethodCardAfterLogo()
     {

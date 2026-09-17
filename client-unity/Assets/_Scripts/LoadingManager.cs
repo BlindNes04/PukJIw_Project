@@ -8,9 +8,8 @@ public class LoadingManager : MonoBehaviour
     [Header("UI Reference")]
     public Slider loadingSlider;
 
-    [Header("Target Scene Names")]
-    public string mbtiSceneName = "Quiz";
-    public string mainGameSceneName = "MainForest";
+    [Header("Target Scene")]
+    public string nextSceneName = "MainMenu"; // หลอดเต็มแล้วไปหน้า MainMenu เสมอ
 
     void Start()
     {
@@ -19,19 +18,12 @@ public class LoadingManager : MonoBehaviour
 
     IEnumerator LoadTargetSceneAsync()
     {
-        // 1. ตรวจสอบว่าเคยทำแบบทดสอบ MBTI หรือยัง (0 = ยังไม่เคย, 1 = ทำแล้ว)
-        bool hasCompletedMBTI = PlayerPrefs.GetInt("HasCompletedMBTI", 0) == 1;
-        string sceneToLoad = hasCompletedMBTI ? mainGameSceneName : mbtiSceneName;
-
-        // 2. เริ่มโหลด Scene ข้อมูลและ Asset เข้า RAM จริงๆ เบื้องหลัง
-        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneToLoad);
-        
-        // ปิดไม่ให้มันตัดข้ามซีนทันทีจนกว่าหลอดจะเต็ม
+        // สั่งโหลดหน้า MainMenu เบื้องหลัง
+        AsyncOperation operation = SceneManager.LoadSceneAsync(nextSceneName);
         operation.allowSceneActivation = false;
 
         while (!operation.isDone)
         {
-            // ค่า progress ของ Unity async จะวิ่งจาก 0.0 ถึง 0.9 เมื่อโหลดข้อมูลเสร็จ
             float progress = Mathf.Clamp01(operation.progress / 0.9f);
             
             if (loadingSlider != null)
@@ -39,12 +31,11 @@ public class LoadingManager : MonoBehaviour
                 loadingSlider.value = progress;
             }
 
-            // เมื่อโหลดข้อมูลเสร็จสมบูรณ์ (progress >= 0.9f)
+            // เมื่อโหลดเสร็จสมบูรณ์
             if (operation.progress >= 0.9f)
             {
-                // หน่วงเวลาสั้นๆ 0.5 วินาที เพื่อให้ผู้เล่นเห็นโลโก้และหลอดเต็ม 100% ชัดเจน
                 yield return new WaitForSeconds(0.5f);
-                operation.allowSceneActivation = true;
+                operation.allowSceneActivation = true; // สลับไปหน้า MainMenu
             }
 
             yield return null;

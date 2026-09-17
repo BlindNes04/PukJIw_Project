@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/LoadingScene.unity
     guid: ef22318c0157a4ab4ad75881250eb517
   - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 010193a57ebec42ddb62ad0c60c5561c
+  - enabled: 1
     path: Assets/Scenes/Quiz.unity
     guid: 86a48a7c6a88c13439826ce4691a6095
   - enabled: 1
